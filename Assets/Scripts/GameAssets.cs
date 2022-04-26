@@ -6,7 +6,8 @@ public class GameAssets : MonoBehaviour
 {
 
     //This class makes it possible to referance Assets through code
-    //Just attachthe code to a GameObject and drag said Asset into the open field.
+    //The sound asset has to be in a folder called ***"Resources"*** 
+    //Just attachthe code to a GameObject that is a prefsb and drag said Asset into the open field.
 
     private static GameAssets _i;
 
