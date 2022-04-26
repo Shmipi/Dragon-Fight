@@ -10,16 +10,15 @@ public class GameAssets : MonoBehaviour
 
     private static GameAssets _i;
 
-    public static GameAssets i
-    {
+    public static GameAssets i {
         get {
             if (_i == null) 
-                _i = (Instantiate(Resources.Load("GameAssets")) as GameAssets).GetComponent<GameAssets>();
+                _i = Instantiate(Resources.Load<GameAssets>("GameAssets"));
             return _i; 
         }
     }
 
-    //Insert what type of Asset you whant to referance
+    //Insert what type of Asset you whant to referance in Unity
     // example: public Sprite nameOfSprite;
 
     public SoundAudioClip[] soundAudioClipArray;

@@ -41,6 +41,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Start()
     {
+        SoundFXController.PlaySound(SoundFXController.Sound.BackgroundMusik);
         player.transform.position = spawnPosition.transform.position;
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();

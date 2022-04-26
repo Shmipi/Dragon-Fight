@@ -34,6 +34,7 @@ public class PlayerOneMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
+            SoundFXController.PlaySound(SoundFXController.Sound.PlayerAttack); 
             destination();
             attack = true;
         }
