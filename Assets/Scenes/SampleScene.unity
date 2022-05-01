@@ -511,6 +511,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 114007584}
+  attackCollider: {fileID: 0}
   spawnPosition: {fileID: 1238755905}
   topPosition: {fileID: 212460452}
   targetPosition: {fileID: 1372537333}
@@ -965,6 +966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 380031857}
+  attackCollider: {fileID: 0}
   spawnPosition: {fileID: 2091368093}
   topPosition: {fileID: 1184005750}
   targetPosition: {fileID: 2095273137}
@@ -1057,6 +1059,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerBehaviour: {fileID: 803823219}
+  attackCollider: {fileID: 1219033287}
+  holdTime: 4
 --- !u!114 &417608765
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2368,6 +2372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 803823217}
+  attackCollider: {fileID: 1219033287}
   spawnPosition: {fileID: 1238755905}
   topPosition: {fileID: 212460452}
   targetPosition: {fileID: 588209662}
@@ -2507,6 +2512,7 @@ MonoBehaviour:
   maxHealth: 5
   currentHealth: 0
   healthBar: {fileID: 483391585}
+  holdTime: 2
 --- !u!1 &838616677
 GameObject:
   m_ObjectHideFlags: 0
@@ -3429,6 +3435,7 @@ MonoBehaviour:
   maxHealth: 5
   currentHealth: 0
   healthBar: {fileID: 1082241456}
+  holdTime: 2
 --- !u!1 &1151998388
 GameObject:
   m_ObjectHideFlags: 0
@@ -4017,6 +4024,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1413951744}
+  attackCollider: {fileID: 950355675}
   spawnPosition: {fileID: 2091368093}
   topPosition: {fileID: 1184005750}
   targetPosition: {fileID: 631271527}
@@ -4175,6 +4183,7 @@ MonoBehaviour:
   maxHealth: 5
   currentHealth: 0
   healthBar: {fileID: 1082241456}
+  holdTime: 2
 --- !u!1 &1422108023
 GameObject:
   m_ObjectHideFlags: 0
@@ -4897,6 +4906,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerBehaviour: {fileID: 1413951745}
+  attackCollider: {fileID: 950355675}
+  holdTime: 4
 --- !u!114 &1598809297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5121,6 +5132,7 @@ MonoBehaviour:
   maxHealth: 5
   currentHealth: 0
   healthBar: {fileID: 483391585}
+  holdTime: 2
 --- !u!1 &1793073301
 GameObject:
   m_ObjectHideFlags: 0
