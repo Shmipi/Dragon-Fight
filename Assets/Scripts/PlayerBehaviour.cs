@@ -9,6 +9,7 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] private Transform spawnPosition;
     [SerializeField] private Transform topPosition;
     [SerializeField] private Transform targetPosition;
+    private Transform attackPosition;
     [SerializeField] private Transform returnPosition;
     [SerializeField] private int maxHP;
     [SerializeField] private float movementSpeed;
@@ -36,6 +37,8 @@ public class PlayerBehaviour : MonoBehaviour
     private string currentAnimation;
     private Vector2 offset;
 
+    public HealthBar healthBar;
+
     private enum PlayerState
     {
         Spawn,
@@ -51,6 +54,7 @@ public class PlayerBehaviour : MonoBehaviour
     private void Awake()
 
     {
+        healthBar.SetMaxHealth(maxHP);
         hitBoxCollider = gameObject.GetComponent<EdgeCollider2D>();
         hitBoxReference = gameObject.transform.localPosition;
         currentHP = maxHP;
@@ -60,7 +64,7 @@ public class PlayerBehaviour : MonoBehaviour
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         offset = hitBoxCollider.points[1];
-
+        attackPosition = targetPosition;
     }
 
     private void FixedUpdate()
@@ -69,7 +73,7 @@ public class PlayerBehaviour : MonoBehaviour
         Vector2 setReference = new Vector2(hitBoxReference.x - gameObject.transform.localPosition.x,
             hitBoxReference.y - gameObject.transform.localPosition.y);
         hitBoxCollider.points = new Vector2[2]{zeros, setReference + offset};
-        print(gameObject.transform.localPosition.y - hitBoxReference.y + ", " + player.ToString());
+  //      print(gameObject.transform.localPosition.y - hitBoxReference.y + ", " + player.ToString());
         if (!busy)
         {
             ChangeState();
@@ -112,12 +116,18 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void StartSpawn()
     {
-        playerState = PlayerState.Spawn;
+        playerState = PlayerState.Spawn;      
     }
 
     public void TakeDamage()
     {
         playerState = PlayerState.Hurt;
+    }
+
+    public void ForceReturn()
+    {
+        StopCoroutine(AttackForward());
+        StartCoroutine(ReturnFromAttack());
     }
 
 
@@ -166,8 +176,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private IEnumerator Spawn()
     {
-        busy = true;
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.1f);
         //spawn animation
         busy = false;
         canAttack = true;
@@ -189,40 +198,50 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Attack()
     {              
-        player.transform.position
-            = Vector2.MoveTowards(player.transform.position, targetPosition.position, Time.fixedDeltaTime * attackMovementSpeed);
         if (canAttack)
         {
             canAttack = false;
-            StartCoroutine(AttackCooldown());
+            StartCoroutine(AttackForward());
         }
+        player.transform.position
+            = Vector2.MoveTowards(player.transform.position, targetPosition.position, Time.fixedDeltaTime * attackMovementSpeed);
        
     }
 
-    private IEnumerator AttackCooldown()
+    private IEnumerator AttackForward()
     {
-        
+        targetPosition = attackPosition;
         print("Attacking");
-        canMove = false;
+        canMove = false;      
         yield return new WaitForSeconds(attackCooldown / 2);
-        Transform oldTarget = targetPosition;
         targetPosition = returnPosition;
         yield return new WaitForSeconds(attackCooldown / 2);
-        targetPosition = oldTarget;
+        targetPosition = attackPosition;
         canAttack = true;
         canMove = true;
         playerState = PlayerState.Standby;
     }
 
-    private IEnumerator Hurt()
+    private IEnumerator ReturnFromAttack()
+    {
+        targetPosition = returnPosition;
+        yield return new WaitForSeconds(attackCooldown / 3);
+        canAttack = true;
+        canMove = true;
+        playerState = PlayerState.Standby;
+    }
+
+        private IEnumerator Hurt()
     {
         canMove = false;
         busy = true;
         print("Getting Hurt");
+        healthBar.ReduceHealth();
         currentHP--;
         yield return new WaitForSeconds(hurtTime);
-        canMove = false;
-        busy = true;
+        canMove = true;
+        busy = false;
+        playerState = PlayerState.Standby;
     }
 
     private IEnumerator Win()

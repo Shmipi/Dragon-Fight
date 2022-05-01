@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Player1
   - Player2
+  - AttackCollider
+  - P1Attack
+  - P2Attack
   layers:
   - Default
   - TransparentFX

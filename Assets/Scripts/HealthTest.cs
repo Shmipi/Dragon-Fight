@@ -50,6 +50,6 @@ public class HealthTest : MonoBehaviour {
     void TakeDamage(int damage) {
         currentHealth -= damage;
 
-        healthBar.SetHealth(currentHealth);
+     //   healthBar.SetHealth(currentHealth);
     }
 }
