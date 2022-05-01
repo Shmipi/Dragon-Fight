@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerBehaviour : MonoBehaviour
 {
     [SerializeField] private GameObject player;
+    [SerializeField] private GameObject attackCollider;
     [SerializeField] private Transform spawnPosition;
     [SerializeField] private Transform topPosition;
     [SerializeField] private Transform targetPosition;
@@ -60,6 +61,8 @@ public class PlayerBehaviour : MonoBehaviour
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
         offset = hitBoxCollider.points[1];
+        attackCollider.GetComponent<BoxCollider2D>().enabled = false;
+        attackCollider.GetComponent<CapsuleCollider2D>().enabled = false;
 
     }
 
