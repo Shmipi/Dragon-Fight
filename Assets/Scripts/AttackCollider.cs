@@ -5,24 +5,16 @@ using UnityEngine;
 public class AttackCollider : MonoBehaviour
 {
 
-    [SerializeField] private string enemyHealthTag;
-    [SerializeField] private string enemyAttackTag;
+    [SerializeField] private string enemyPlayerTag;
 
-    private void OnTriggerEnter2D(Collider2D collider)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collider.gameObject.CompareTag(enemyHealthTag))
+        if (collision.gameObject.CompareTag(enemyPlayerTag) == true)
+
         {
-//            print("Collision!");
-            print(enemyAttackTag + "is taking dmg");
-            collider.gameObject.GetComponent<PlayerBehaviour>().TakeDamage();
-            collider.gameObject.GetComponent<PlayerBehaviour>().ForceReturn();
-            gameObject.GetComponentInParent<PlayerBehaviour>().ForceReturn();
+            print("Collision!");
+            collision.gameObject.GetComponent<PlayerBehaviour>().TakeDamage();
         }
 
-        if (collider.gameObject.CompareTag(enemyAttackTag))
-        {
-            print("Head Collision");
-            collider.gameObject.GetComponentInParent<PlayerBehaviour>().ForceReturn();
-        }
     }
 }
