@@ -36,7 +36,6 @@ public class PlayerBehaviour : MonoBehaviour
     private string currentAnimation;
     private Vector2 offset;
 
-
     private enum PlayerState
     {
         Spawn,

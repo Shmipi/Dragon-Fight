@@ -2328,6 +2328,7 @@ GameObject:
   - component: {fileID: 803823219}
   - component: {fileID: 803823218}
   - component: {fileID: 803823223}
+  - component: {fileID: 803823224}
   m_Layer: 0
   m_Name: Player1Head
   m_TagString: Player1
@@ -2479,7 +2480,7 @@ EdgeCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0.66, y: -2.78}
@@ -2491,6 +2492,21 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!114 &803823224
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 803823217}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55fb3f295cfcb5744a92179477b118e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  currentHealth: 0
+  healthBar: {fileID: 483391585}
 --- !u!1 &838616677
 GameObject:
   m_ObjectHideFlags: 0
@@ -2967,7 +2983,7 @@ GameObject:
   - component: {fileID: 950355679}
   m_Layer: 0
   m_Name: AttackCollider
-  m_TagString: Untagged
+  m_TagString: AttackCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3554,7 +3570,7 @@ GameObject:
   - component: {fileID: 1219033291}
   m_Layer: 0
   m_Name: AttackCollider
-  m_TagString: Untagged
+  m_TagString: AttackCollider
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3980,6 +3996,7 @@ GameObject:
   - component: {fileID: 1413951745}
   - component: {fileID: 1413951746}
   - component: {fileID: 1413951750}
+  - component: {fileID: 1413951751}
   m_Layer: 0
   m_Name: Player2Head
   m_TagString: Player2
@@ -4131,10 +4148,10 @@ EdgeCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.66, y: 3}
   m_EdgeRadius: 0
   m_Points:
   - {x: 0.46, y: -9}
@@ -4143,6 +4160,21 @@ EdgeCollider2D:
   m_AdjacentEndPoint: {x: 0, y: 0}
   m_UseAdjacentStartPoint: 0
   m_UseAdjacentEndPoint: 0
+--- !u!114 &1413951751
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1413951744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55fb3f295cfcb5744a92179477b118e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 5
+  currentHealth: 0
+  healthBar: {fileID: 1082241456}
 --- !u!1 &1422108023
 GameObject:
   m_ObjectHideFlags: 0
