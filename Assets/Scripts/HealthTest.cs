@@ -15,12 +15,9 @@ public class HealthTest : MonoBehaviour {
 
     private bool collided = false;
 
-    void Start() {
-        ResetHealth();
-    }
+    private EdgeCollider2D enemyCollider;
 
-    public void ResetHealth()
-    {
+    void Start() {
         currentHealth = maxHealth;
         healthBar.SetMaxHealth(maxHealth);
     }
@@ -53,6 +50,6 @@ public class HealthTest : MonoBehaviour {
     void TakeDamage(int damage) {
         currentHealth -= damage;
 
-        healthBar.SetHealth(currentHealth);
+     //   healthBar.SetHealth(currentHealth);
     }
 }
