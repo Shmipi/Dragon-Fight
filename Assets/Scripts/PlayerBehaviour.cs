@@ -5,40 +5,54 @@ using UnityEngine;
 
 public class PlayerBehaviour : MonoBehaviour
 {
+    #region Attributes
     [SerializeField] private GameObject player;
     [SerializeField] private Transform spawnPosition;
     [SerializeField] private Transform topPosition;
-    [SerializeField] private Transform targetPosition;
-    private Transform attackPosition;
+    [SerializeField] private Transform attackPosition;
     [SerializeField] private Transform returnPosition;
+    [SerializeField] private Transform currentTarget;
     [SerializeField] private int maxHP;
     [SerializeField] private float movementSpeed;
     [SerializeField] private float attackMovementSpeed;
     [SerializeField] private float attackCooldown;
     [SerializeField] private float hurtTime;
     [SerializeField] private MatchController matchController;
+    [SerializeField] private Animator animator;
+
 
     private Vector3 hitBoxReference;
     private int currentHP;
     private string currentState;
     private bool busy;
     private const string SPAWN = "Spawn";
-    private const string STAND_BY = "Standby";
+    private const string IDLE = "Idle";
     private const string MOVE = "Move";
-    private const string ATTACK = "Attack";
+    private const string RETURN = "Return";
+    private const string ATTACKF = "AttackFwd";
+    private const string ATTACKB = "AttackBck";
     private const string HURT = "Hurt";
     private const string WIN = "Win";
     private const string LOSE = "Lose";
+    private const string IDLESPRITE = "IdleSprite";
+    private const string HURTSPRITE = "HurtSprite";
+    private const string ATKFSPRITE = "AttackFwdSprite";
+    private const string ATKBSPRITE = "AttackBckSprite";
+    private const string LOSESPRITE = "LoseSprite";
     private PlayerState playerState;
     private Rigidbody2D rigidBody2D;
-    private Animator animator;
     private EdgeCollider2D hitBoxCollider;
     private bool canMove;
     private bool canAttack;
     private string currentAnimation;
     private Vector2 offset;
-
     public HealthBar healthBar;
+    [SerializeField] private float timeController = 0f;
+    [SerializeField] private float currentSpeed;
+    private float attackCooldownF;
+    private float attackCooldownB;
+    private bool reseted = false;
+    private string playerName;
 
     private enum PlayerState
     {
@@ -52,34 +66,57 @@ public class PlayerBehaviour : MonoBehaviour
         Locked,
     }
 
+    #endregion
+
+    #region Settling and Update Voids
+
     private void Awake()
 
-    {     
+    {
+        playerState = PlayerState.Locked;
         healthBar.SetMaxHealth(maxHP);
-        hitBoxCollider = gameObject.GetComponent<EdgeCollider2D>();
+        hitBoxCollider = gameObject.GetComponentInChildren<EdgeCollider2D>();
         hitBoxReference = gameObject.transform.localPosition;
         currentHP = maxHP;
         canMove = false;
         SoundFXController.PlaySound(SoundFXController.Sound.BackgroundMusik);
         player.transform.position = spawnPosition.transform.position;
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
-        animator = gameObject.GetComponent<Animator>();
         offset = hitBoxCollider.points[1];
-        attackPosition = targetPosition;
+        ResetState();
+        CalculateCooldown();
+        currentAnimation = IDLE;
+        playerName = transform.GetChild(0).tag;
+
+        /*
+        AnimationClip[] animationClips = animator.runtimeAnimatorController.animationClips;
+
+        foreach (AnimationClip animClip in animationClips)
+        {
+            Debug.Log(animClip.name + ": " + animClip.length);
+        }
+        */
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
+        Move(currentTarget, currentSpeed);
         Vector2 zeros = Vector2.zero;
         Vector2 setReference = new Vector2(hitBoxReference.x - gameObject.transform.localPosition.x,
             hitBoxReference.y - gameObject.transform.localPosition.y);
-        hitBoxCollider.points = new Vector2[2]{zeros, setReference + offset};
-  //      print(gameObject.transform.localPosition.y - hitBoxReference.y + ", " + player.ToString());
+        hitBoxCollider.points = new Vector2[2] { zeros, setReference + offset };
+    }
+
+    private void FixedUpdate()
+    {    
         if (!busy)
         {
             ChangeState();
         }
     }
+    #endregion
+
+    #region public methods
 
     public void AttackButton()
     {
@@ -89,7 +126,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
 
         if (!busy)
-        {               
+        {            
             playerState = PlayerState.Attack;
         }
     }
@@ -109,8 +146,16 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void MoveOnReleaseButton()
     {
+        if (!canMove)
+        {
+            return;
+        }
+
         if (!busy)
         {
+            timeController = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+            ChangeAnimation(RETURN, timeController);
+
             playerState = PlayerState.Standby;
         }
     }
@@ -123,12 +168,26 @@ public class PlayerBehaviour : MonoBehaviour
     public void TakeDamage()
     {
         playerState = PlayerState.Hurt;
+        animator.Play(HURTSPRITE, 2, 0f);
+
     }
 
     public void ForceReturn()
     {
-        StopCoroutine(AttackForward());
-        StartCoroutine(ReturnFromAttack());
+        string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
+        if (clipName == IDLE) return;
+        if(clipName == "Return0")
+        {
+            float exitTime = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(1).normalizedTime);
+            StopAllCoroutines();
+            StartCoroutine(ReturnFromAttacked(exitTime));
+        }
+        else
+        {
+            canMove = true;
+            ChangeAnimation(RETURN, timeController);
+            playerState = PlayerState.Standby;
+        }
     }
 
     public void Win()
@@ -136,10 +195,12 @@ public class PlayerBehaviour : MonoBehaviour
         playerState = PlayerState.Win;
     }
 
-    public void ResetPosition()
+    public void ResetPlayer()
     {
         gameObject.transform.position = spawnPosition.transform.position;
+        ResetState();
     }
+    #endregion
 
     #region StateMachine
 
@@ -147,10 +208,13 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (playerState.ToString() != currentState)
         {
-            print(playerState.ToString());
+            print(animator.name.ToString() + ": " + playerState.ToString());
             currentState = playerState.ToString();
         }
-
+        if(playerState != PlayerState.Standby)
+        {
+            reseted = false;
+        }
 
         switch (playerState)
         {
@@ -161,7 +225,7 @@ public class PlayerBehaviour : MonoBehaviour
                 Standby();
                 break;
             case PlayerState.Move:
-                Move();
+                MoveState();
                 break;
             case PlayerState.Attack:
                 Attack();
@@ -178,6 +242,7 @@ public class PlayerBehaviour : MonoBehaviour
             default:
                 break;
         }
+
     }
 
     #endregion 
@@ -196,97 +261,194 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Standby()
     {
-        player.transform.position
-            = Vector2.MoveTowards(player.transform.position, spawnPosition.position, Time.fixedDeltaTime * movementSpeed * 0.8f);
+        if (!reseted)
+        {
+            currentSpeed = movementSpeed * 0.8f;
+            currentTarget = spawnPosition;
+            animator.Play(IDLESPRITE, 2, 0f);
+            reseted = true;
+        }
     }
 
-    private void Move()
+    private void MoveState()
     {
-        player.transform.position 
-            = Vector2.MoveTowards(player.transform.position, topPosition.position, Time.fixedDeltaTime * movementSpeed);
+        if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == IDLE)
+        {
+            ChangeAnimation(MOVE, 0f);
+        }
+        else
+        {
+            ChangeAnimation(MOVE, exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(0).normalizedTime));
+        }
+        currentTarget = topPosition;
+        currentSpeed = movementSpeed;
+        
     }
 
     private void Attack()
-    {              
+    {
         if (canAttack)
         {
+            string exitAnimation;
             canAttack = false;
-            StartCoroutine(AttackForward());
-        }
-        player.transform.position
-            = Vector2.MoveTowards(player.transform.position, targetPosition.position, Time.fixedDeltaTime * attackMovementSpeed);
-       
+            if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == IDLE)
+            {
+                timeController = 1f;
+                exitAnimation = IDLE;
+            }
+            else
+            {
+                timeController = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+                exitAnimation = RETURN;
+            }          
+            StartCoroutine(AttackForward(exitAnimation));
+        }     
     }
 
-    private IEnumerator AttackForward()
+    private IEnumerator AttackForward(string exitAnimation)
     {
-        targetPosition = attackPosition;
-        print("Attacking");
-        canMove = false;      
-        yield return new WaitForSeconds(attackCooldown / 2);
-        targetPosition = returnPosition;
-        yield return new WaitForSeconds(attackCooldown / 2);
-        targetPosition = attackPosition;
+        canMove = false;
+        animator.Play(ATKFSPRITE, 2, 0f);
+        animator.Play("Return0", 0, timeController);
+        ChangeAnimation(ATTACKF);         
+        currentTarget = attackPosition;
+        currentSpeed = attackMovementSpeed;
+        yield return new WaitForSeconds(attackCooldownF);
+        animator.Play(ATKBSPRITE, 2, 0f);
+        ChangeAnimation(ATTACKB);
+        currentTarget = returnPosition;
+        currentSpeed = attackMovementSpeed * attackCooldownF / attackCooldownB;
+        yield return new WaitForSeconds(attackCooldownB);
+        currentTarget = spawnPosition;
+        currentSpeed = movementSpeed;
+        if (exitAnimation == RETURN)
+        {
+            ChangeAnimation(RETURN, timeController);
+        }
+        else
+        {
+            ChangeAnimation(IDLE, 0f);
+        }
         canAttack = true;
         canMove = true;
         playerState = PlayerState.Standby;
     }
 
-    private IEnumerator ReturnFromAttack()
+    private IEnumerator ReturnFromAttacked(float exitTime)
     {
-        targetPosition = returnPosition;
-        yield return new WaitForSeconds(attackCooldown / 3);
+        currentTarget = returnPosition;
+        animator.Play("Return0", 0, timeController);
+        animator.Play(ATKBSPRITE, 2, 0f);
+        animator.Play(ATTACKB, 1, exitTime);
+        currentSpeed = attackMovementSpeed * attackCooldownF / attackCooldownB;
+        yield return new WaitForSeconds(attackCooldownB * (1f - exitTime));
         canAttack = true;
         canMove = true;
+        currentTarget = spawnPosition;
+        ChangeAnimation(RETURN, timeController);
         playerState = PlayerState.Standby;
     }
 
         private IEnumerator Hurt()
-    {
+    {   
         canMove = false;
         busy = true;
-        print("Getting Hurt");
+        if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == MOVE)
+        {
+            timeController = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        }
+        else if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == RETURN)
+        {
+            timeController = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
+        }
         healthBar.ReduceHealth();
         currentHP--;
         if(currentHP <= 0)
         {
-            busy = false;
             playerState = PlayerState.Lose;
+            busy = false;
             yield break;
         }
+        Transform oldTarget = currentTarget;
+        currentTarget = gameObject.transform;
         yield return new WaitForSeconds(hurtTime);
-        canMove = true;
+        currentTarget = oldTarget;
         busy = false;
-        playerState = PlayerState.Standby;
+        ForceReturn();
     }
 
     private IEnumerator WinState()
     {      
-        busy = true;
         canMove = false;
+        busy = true;
         yield break;
     }
 
     private IEnumerator Lose()
     {
-        matchController.MatchFinished(player.tag);
-        busy = true;
+        animator.Play(LOSESPRITE, 2, 0f);
+        matchController.MatchFinished(playerName);
         canMove = false;
+        busy = true;
         yield break;
     }
 
-    protected void ChangeAnimation(string newAnimation)
+    
+    private void ChangeAnimation(string newAnimation)
     {
         if (currentAnimation == newAnimation) return;
-        animator.Play(newAnimation);
+        animator.Play(newAnimation, 1, 0f);
         currentAnimation = newAnimation;
     }
 
+    private void ChangeAnimation(string newAnimation, float animationTime)
+    {
+        if (currentAnimation == newAnimation) return;
+        animator.Play(newAnimation, 0, animationTime);
+        currentAnimation = newAnimation;
+    }
+    
+
+    private float exitAnimationFrame(float animation)
+    {
+        if (animation >= 1f)
+            return 0f;
+        else
+        {
+            return 1f - animation;
+        }
+    }
+
+    /*
     private IEnumerator LockedTime(float lockTime)
     {
         playerState = PlayerState.Locked;
         yield return new WaitForSeconds(lockTime);
         playerState = PlayerState.Standby;
+    }
+    */
+
+    private void Move(Transform target, float speed)
+    {
+        player.transform.position
+              = Vector2.MoveTowards(player.transform.position, target.position, Time.deltaTime * 3f * speed);
+    }
+
+    private void CalculateCooldown()
+    {
+        attackCooldownF = attackCooldown * 0.4f;
+        attackCooldownB = attackCooldown * 0.6f;
+    }
+
+    private void ResetState()
+    {
+        ChangeAnimation(IDLE, 0f);
+        animator.Play(IDLESPRITE, 2, 0f);
+        currentSpeed = movementSpeed;
+        currentTarget = spawnPosition;
+        currentHP = maxHP;
+        playerState = PlayerState.Locked;
+        busy = false;
     }
 
     #endregion
