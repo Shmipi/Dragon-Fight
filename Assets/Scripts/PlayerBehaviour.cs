@@ -9,11 +9,17 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] private Transform spawnPosition;
     [SerializeField] private Transform topPosition;
     [SerializeField] private Transform targetPosition;
+    private Transform attackPosition;
     [SerializeField] private Transform returnPosition;
-
+    [SerializeField] private int maxHP;
     [SerializeField] private float movementSpeed;
     [SerializeField] private float attackMovementSpeed;
     [SerializeField] private float attackCooldown;
+    [SerializeField] private float hurtTime;
+    [SerializeField] private MatchController matchController;
+
+    private Vector3 hitBoxReference;
+    private int currentHP;
     private string currentState;
     private bool busy;
     private const string SPAWN = "Spawn";
@@ -26,7 +32,13 @@ public class PlayerBehaviour : MonoBehaviour
     private PlayerState playerState;
     private Rigidbody2D rigidBody2D;
     private Animator animator;
+    private EdgeCollider2D hitBoxCollider;
+    private bool canMove;
     private bool canAttack;
+    private string currentAnimation;
+    private Vector2 offset;
+
+    public HealthBar healthBar;
 
     private enum PlayerState
     {
@@ -37,18 +49,32 @@ public class PlayerBehaviour : MonoBehaviour
         Hurt,
         Win,
         Lose,
+        Locked,
     }
 
-    private void Start()
-    {
+    private void Awake()
+
+    {     
+        healthBar.SetMaxHealth(maxHP);
+        hitBoxCollider = gameObject.GetComponent<EdgeCollider2D>();
+        hitBoxReference = gameObject.transform.localPosition;
+        currentHP = maxHP;
+        canMove = false;
         SoundFXController.PlaySound(SoundFXController.Sound.BackgroundMusik);
         player.transform.position = spawnPosition.transform.position;
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         animator = gameObject.GetComponent<Animator>();
+        offset = hitBoxCollider.points[1];
+        attackPosition = targetPosition;
     }
 
     private void FixedUpdate()
     {
+        Vector2 zeros = Vector2.zero;
+        Vector2 setReference = new Vector2(hitBoxReference.x - gameObject.transform.localPosition.x,
+            hitBoxReference.y - gameObject.transform.localPosition.y);
+        hitBoxCollider.points = new Vector2[2]{zeros, setReference + offset};
+  //      print(gameObject.transform.localPosition.y - hitBoxReference.y + ", " + player.ToString());
         if (!busy)
         {
             ChangeState();
@@ -57,6 +83,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void AttackButton()
     {
+        if (!canMove)
+        {
+            return;
+        }
+
         if (!busy)
         {               
             playerState = PlayerState.Attack;
@@ -65,6 +96,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void MoveOnHoldButton()
     {
+        if (!canMove)
+        {
+            return;
+        }
+
         if (!busy)
         {   
             playerState = PlayerState.Move;
@@ -79,11 +115,43 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    public void StartSpawn()
+    {
+        playerState = PlayerState.Spawn;      
+    }
+
+    public void TakeDamage()
+    {
+        playerState = PlayerState.Hurt;
+    }
+
+    public void ForceReturn()
+    {
+        StopCoroutine(AttackForward());
+        StartCoroutine(ReturnFromAttack());
+    }
+
+    public void Win()
+    {
+        playerState = PlayerState.Win;
+    }
+
+    public void ResetPosition()
+    {
+        gameObject.transform.position = spawnPosition.transform.position;
+    }
+
     #region StateMachine
 
     private void ChangeState()
     {
-       
+        if (playerState.ToString() != currentState)
+        {
+            print(playerState.ToString());
+            currentState = playerState.ToString();
+        }
+
+
         switch (playerState)
         {
             case PlayerState.Spawn:
@@ -102,7 +170,7 @@ public class PlayerBehaviour : MonoBehaviour
                 StartCoroutine(Hurt());
                 break;
             case PlayerState.Win:
-                StartCoroutine(Win());
+                StartCoroutine(WinState());
                 break;
             case PlayerState.Lose:
                 StartCoroutine(Lose());
@@ -117,18 +185,12 @@ public class PlayerBehaviour : MonoBehaviour
     #region Void Behaviour
 
     private IEnumerator Spawn()
-    {
-        busy = true;
-        print("Ready for battle!");
-        print("3");
-        yield return new WaitForSeconds(1f);
-        print("2");
-        yield return new WaitForSeconds(1f);
-        print("1");
-        yield return new WaitForSeconds(1f);
-        print("Go!");
+    {       
+        yield return new WaitForSeconds(0.1f);
+        //spawn animation
         busy = false;
         canAttack = true;
+        canMove = true;
         playerState = PlayerState.Standby;
     }
 
@@ -146,45 +208,86 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Attack()
     {              
-        player.transform.position
-            = Vector2.MoveTowards(player.transform.position, targetPosition.position, Time.fixedDeltaTime * attackMovementSpeed);
         if (canAttack)
         {
             canAttack = false;
-            StartCoroutine(AttackCooldown());
+            StartCoroutine(AttackForward());
         }
+        player.transform.position
+            = Vector2.MoveTowards(player.transform.position, targetPosition.position, Time.fixedDeltaTime * attackMovementSpeed);
        
     }
 
-    private IEnumerator AttackCooldown()
+    private IEnumerator AttackForward()
     {
-        
+        targetPosition = attackPosition;
         print("Attacking");
+        canMove = false;      
         yield return new WaitForSeconds(attackCooldown / 2);
-        Transform oldTarget = targetPosition;
         targetPosition = returnPosition;
         yield return new WaitForSeconds(attackCooldown / 2);
-        targetPosition = oldTarget;
+        targetPosition = attackPosition;
         canAttack = true;
+        canMove = true;
         playerState = PlayerState.Standby;
     }
 
-    private IEnumerator Hurt()
+    private IEnumerator ReturnFromAttack()
     {
-        print("Getting Hurt");
-        yield break;
+        targetPosition = returnPosition;
+        yield return new WaitForSeconds(attackCooldown / 3);
+        canAttack = true;
+        canMove = true;
+        playerState = PlayerState.Standby;
     }
 
-    private IEnumerator Win()
+        private IEnumerator Hurt()
     {
+        canMove = false;
+        busy = true;
+        print("Getting Hurt");
+        healthBar.ReduceHealth();
+        currentHP--;
+        if(currentHP <= 0)
+        {
+            busy = false;
+            playerState = PlayerState.Lose;
+            yield break;
+        }
+        yield return new WaitForSeconds(hurtTime);
+        canMove = true;
+        busy = false;
+        playerState = PlayerState.Standby;
+    }
+
+    private IEnumerator WinState()
+    {      
+        busy = true;
+        canMove = false;
         yield break;
     }
 
     private IEnumerator Lose()
     {
+        matchController.MatchFinished(player.tag);
+        busy = true;
+        canMove = false;
         yield break;
     }
 
-    #endregion
+    protected void ChangeAnimation(string newAnimation)
+    {
+        if (currentAnimation == newAnimation) return;
+        animator.Play(newAnimation);
+        currentAnimation = newAnimation;
+    }
 
+    private IEnumerator LockedTime(float lockTime)
+    {
+        playerState = PlayerState.Locked;
+        yield return new WaitForSeconds(lockTime);
+        playerState = PlayerState.Standby;
+    }
+
+    #endregion
 }
