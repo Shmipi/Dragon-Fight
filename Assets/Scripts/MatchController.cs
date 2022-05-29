@@ -28,8 +28,8 @@ public class MatchController : MonoBehaviour
         restartButton.SetActive(false);
         player1UI.SetActive(true);
         player2UI.SetActive(true);
-        player1.gameObject.GetComponent<PlayerBehaviour>().ResetPlayer();
-        player2.gameObject.GetComponent<PlayerBehaviour>().ResetPlayer();
+        player1.gameObject.GetComponent<PlayerBehaviour>().ResetPosition();
+        player2.gameObject.GetComponent<PlayerBehaviour>().ResetPosition();
         player1.gameObject.GetComponent<PlayerBehaviour>().healthBar.ResetHP();
         player2.gameObject.GetComponent<PlayerBehaviour>().healthBar.ResetHP();
     }
@@ -50,16 +50,16 @@ public class MatchController : MonoBehaviour
 
     }
 
-    public void MatchFinished(string playerName)
+    public void MatchFinished(string dragon)
     {
         winPanel.SetActive(true);        
-        if(playerName == "Player1")
+        if(dragon == "Player1")
         {
             player2.gameObject.GetComponent<PlayerBehaviour>().Win();
             winText.text = "Player 2" + " Wins!";
 
         }
-        else if(playerName == "Player2")
+        else
         {
             player1.gameObject.GetComponent<PlayerBehaviour>().Win();
             winText.text = "Player 1" + " Wins!";
