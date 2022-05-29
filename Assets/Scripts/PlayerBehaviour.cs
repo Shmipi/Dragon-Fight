@@ -54,6 +54,7 @@ public class PlayerBehaviour : MonoBehaviour
     private float attackCooldownB;
     private bool reseted = false;
     private string playerName;
+    private bool canPressAtk = true;
 
     private enum PlayerState
     {
@@ -143,6 +144,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void MoveOnHoldButton()
     {
+        canPressAtk = false;
         if (!canMove)
         {
             return;
@@ -156,6 +158,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void MoveOnReleaseButton()
     {
+        canPressAtk = true;
         if (!canMove)
         {
             return;
@@ -361,10 +364,11 @@ public class PlayerBehaviour : MonoBehaviour
         playerState = PlayerState.Standby;
     }
 
-        private IEnumerator Hurt()
+    private IEnumerator Hurt()
     {   
         canMove = false;
         busy = true;
+        hitBoxCollider.gameObject.SetActive(false);
         if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == MOVE)
         {
             timeController = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
@@ -383,14 +387,17 @@ public class PlayerBehaviour : MonoBehaviour
         }
         Transform oldTarget = currentTarget;
         currentTarget = gameObject.transform;
+
         yield return new WaitForSeconds(hurtTime);
+        hitBoxCollider.gameObject.SetActive(true);
         currentTarget = oldTarget;
         busy = false;
         ForceReturn();
     }
 
     private IEnumerator WinState()
-    {      
+    {
+        hitBoxCollider.gameObject.SetActive(false);
         canMove = false;
         busy = true;
         yield break;
@@ -398,6 +405,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private IEnumerator Lose()
     {
+        hitBoxCollider.gameObject.SetActive(false);
         animator.Play(LOSESPRITE, 2, 0f);
         matchController.MatchFinished(playerName);
         canMove = false;
@@ -459,6 +467,7 @@ public class PlayerBehaviour : MonoBehaviour
         currentSpeed = movementSpeed;
         currentTarget = spawnPosition;
         currentHP = maxHP;
+        hitBoxCollider.gameObject.SetActive(true);
         playerState = PlayerState.Locked;
         busy = false;
     }
