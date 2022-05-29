@@ -28,8 +28,8 @@ public class MatchController : MonoBehaviour
         restartButton.SetActive(false);
         player1UI.SetActive(true);
         player2UI.SetActive(true);
-        player1.gameObject.GetComponent<PlayerBehaviour>().ResetPosition();
-        player2.gameObject.GetComponent<PlayerBehaviour>().ResetPosition();
+        player1.gameObject.GetComponent<PlayerBehaviour>().ResetPlayer();
+        player2.gameObject.GetComponent<PlayerBehaviour>().ResetPlayer();
         player1.gameObject.GetComponent<PlayerBehaviour>().healthBar.ResetHP();
         player2.gameObject.GetComponent<PlayerBehaviour>().healthBar.ResetHP();
     }
