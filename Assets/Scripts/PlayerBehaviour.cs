@@ -368,6 +368,7 @@ public class PlayerBehaviour : MonoBehaviour
     {   
         canMove = false;
         busy = true;
+        canPressAtk = false;
         hitBoxCollider.gameObject.SetActive(false);
         if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == MOVE)
         {
@@ -390,6 +391,7 @@ public class PlayerBehaviour : MonoBehaviour
 
         yield return new WaitForSeconds(hurtTime);
         hitBoxCollider.gameObject.SetActive(true);
+        canPressAtk = true;
         currentTarget = oldTarget;
         busy = false;
         ForceReturn();
@@ -399,6 +401,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         hitBoxCollider.gameObject.SetActive(false);
         canMove = false;
+        canPressAtk = false;
         busy = true;
         yield break;
     }
@@ -409,6 +412,7 @@ public class PlayerBehaviour : MonoBehaviour
         animator.Play(LOSESPRITE, 2, 0f);
         matchController.MatchFinished(playerName);
         canMove = false;
+        canPressAtk = false;
         busy = true;
         yield break;
     }
@@ -469,6 +473,7 @@ public class PlayerBehaviour : MonoBehaviour
         currentHP = maxHP;
         hitBoxCollider.gameObject.SetActive(true);
         playerState = PlayerState.Locked;
+        canPressAtk = true;
         busy = false;
     }
 
