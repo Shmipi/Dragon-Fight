@@ -1112,7 +1112,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 768eeb12558156f448100d2b51a0cecb, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -2019,7 +2019,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: 20bea30637692fe4780cddcd3ca7ac77, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -4010,6 +4010,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1542890074}
   - component: {fileID: 1542890073}
+  - component: {fileID: 1542890075}
   m_Layer: 0
   m_Name: Background
   m_TagString: Untagged
@@ -4057,7 +4058,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: eb32139782b37674a91b524f46d5cd3e, type: 3}
+  m_Sprite: {fileID: 21300000, guid: c682cb81971eab049b85982aa60ca704, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -4076,12 +4077,30 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1542890072}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.0255, z: 1}
-  m_LocalScale: {x: 1.663854, y: 1.4074787, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1542890075
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1542890072}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b45325511720e7439ccc86505055555, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GameBackground: {fileID: 1542890073}
+  Sprites:
+  - {fileID: 21300000, guid: c682cb81971eab049b85982aa60ca704, type: 3}
+  - {fileID: 21300000, guid: e6735ec7bf8981044b1637be9b7697ea, type: 3}
+  - {fileID: 21300000, guid: dfabb226e18219645a3f1445d65334bd, type: 3}
+  x: 0
 --- !u!1 &1565354606
 GameObject:
   m_ObjectHideFlags: 0

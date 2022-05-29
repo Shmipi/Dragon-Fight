@@ -19,7 +19,8 @@ public class PlayerBehaviour : MonoBehaviour
     [SerializeField] private float hurtTime;
     [SerializeField] private MatchController matchController;
     [SerializeField] private Animator animator;
-
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip attackClip;
 
     private Vector3 hitBoxReference;
     private int currentHP;
@@ -87,6 +88,7 @@ public class PlayerBehaviour : MonoBehaviour
         CalculateCooldown();
         currentAnimation = IDLE;
         playerName = transform.GetChild(0).tag;
+
 
         /*
         AnimationClip[] animationClips = animator.runtimeAnimatorController.animationClips;
@@ -289,6 +291,7 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if (canAttack)
         {
+            audioSource.PlayOneShot(attackClip);
             string exitAnimation;
             canAttack = false;
             if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == IDLE)
