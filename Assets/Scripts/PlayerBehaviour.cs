@@ -55,6 +55,7 @@ public class PlayerBehaviour : MonoBehaviour
     private bool reseted = false;
     private string playerName;
     private bool canPressAtk = true;
+    private bool canGetHurt = true;
 
     private enum PlayerState
     {
@@ -244,7 +245,10 @@ public class PlayerBehaviour : MonoBehaviour
                 Attack();
                 break;
             case PlayerState.Hurt:
-                StartCoroutine(Hurt());
+                if (canGetHurt)
+                {
+                    StartCoroutine(Hurt());
+                }
                 break;
             case PlayerState.Win:
                 StartCoroutine(WinState());
@@ -365,11 +369,12 @@ public class PlayerBehaviour : MonoBehaviour
     }
 
     private IEnumerator Hurt()
-    {   
+    {     
+        canGetHurt = false;
         canMove = false;
         busy = true;
         canPressAtk = false;
-        hitBoxCollider.gameObject.SetActive(false);
+        hitBoxCollider.enabled = false;
         if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == MOVE)
         {
             timeController = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
@@ -378,6 +383,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             timeController = animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
         }
+        
         healthBar.ReduceHealth();
         currentHP--;
         if(currentHP <= 0)
@@ -390,16 +396,17 @@ public class PlayerBehaviour : MonoBehaviour
         currentTarget = gameObject.transform;
 
         yield return new WaitForSeconds(hurtTime);
-        hitBoxCollider.gameObject.SetActive(true);
+        hitBoxCollider.enabled = true;
         canPressAtk = true;
         currentTarget = oldTarget;
         busy = false;
+        canGetHurt = true;
         ForceReturn();
     }
 
     private IEnumerator WinState()
     {
-        hitBoxCollider.gameObject.SetActive(false);
+        hitBoxCollider.enabled = false;
         canMove = false;
         canPressAtk = false;
         busy = true;
@@ -408,7 +415,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private IEnumerator Lose()
     {
-        hitBoxCollider.gameObject.SetActive(false);
+        hitBoxCollider.enabled = false;
         animator.Play(LOSESPRITE, 2, 0f);
         matchController.MatchFinished(playerName);
         canMove = false;
@@ -471,8 +478,9 @@ public class PlayerBehaviour : MonoBehaviour
         currentSpeed = movementSpeed;
         currentTarget = spawnPosition;
         currentHP = maxHP;
-        hitBoxCollider.gameObject.SetActive(true);
+        hitBoxCollider.enabled = true;
         playerState = PlayerState.Locked;
+        canGetHurt = true;
         canPressAtk = true;
         busy = false;
     }
