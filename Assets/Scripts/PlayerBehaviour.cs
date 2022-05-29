@@ -116,7 +116,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
     #endregion
 
-    #region public methods
+    #region Public methods
 
     public void AttackButton()
     {
