@@ -80,7 +80,6 @@ public class PlayerBehaviour : MonoBehaviour
         hitBoxReference = gameObject.transform.localPosition;
         currentHP = maxHP;
         canMove = false;
-        SoundFXController.PlaySound(SoundFXController.Sound.BackgroundMusik);
         player.transform.position = spawnPosition.transform.position;
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         offset = hitBoxCollider.points[1];
@@ -88,6 +87,15 @@ public class PlayerBehaviour : MonoBehaviour
         CalculateCooldown();
         currentAnimation = IDLE;
         playerName = transform.GetChild(0).tag;
+
+        if(playerName == "Player1")
+        {
+            audioSource.panStereo = -0.75f;
+        }
+        else if(playerName == "Player2")
+        {
+            audioSource.panStereo = 0.75f;
+        }
 
 
         /*
@@ -290,8 +298,7 @@ public class PlayerBehaviour : MonoBehaviour
     private void Attack()
     {
         if (canAttack)
-        {
-            audioSource.PlayOneShot(attackClip);
+        {           
             string exitAnimation;
             canAttack = false;
             if (animator.GetCurrentAnimatorClipInfo(0)[0].clip.name == IDLE)
@@ -311,6 +318,8 @@ public class PlayerBehaviour : MonoBehaviour
     private IEnumerator AttackForward(string exitAnimation)
     {
         canMove = false;
+        audioSource.time = 1.2f;
+        audioSource.Play();
         animator.Play(ATKFSPRITE, 2, 0f);
         animator.Play("Return0", 0, timeController);
         ChangeAnimation(ATTACKF);         

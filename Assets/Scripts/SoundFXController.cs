@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class SoundFXController
 {
-
+    /*
     public enum Sound //Holds the referance to the audioclips through GameAssets
     {
         BackgroundMusik,
@@ -74,5 +74,5 @@ public static class SoundFXController
     
     //To use insert: SoundFXController.PlaySound(SoundFXController.Sound.NameOfSound);
 
-
+    */
 }

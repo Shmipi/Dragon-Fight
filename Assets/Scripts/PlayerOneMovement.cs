@@ -33,8 +33,7 @@ public class PlayerOneMovement : MonoBehaviour
         moveDirection = new Vector3(0, moveY).normalized;
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            SoundFXController.PlaySound(SoundFXController.Sound.PlayerAttack); 
+        {    
             destination();
             attack = true;
         }
