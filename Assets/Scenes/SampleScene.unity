@@ -958,6 +958,10 @@ PrefabInstance:
       propertyPath: playerBehaviour
       value: 
       objectReference: {fileID: 446814183}
+    - target: {fileID: 6763148219770615323, guid: 5ce47dc86707a01469f411bca1eeda8a, type: 3}
+      propertyPath: m_Text
+      value: Pause
+      objectReference: {fileID: 0}
     - target: {fileID: 6763148219928979862, guid: 5ce47dc86707a01469f411bca1eeda8a, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
