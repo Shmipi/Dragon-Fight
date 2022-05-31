@@ -74,18 +74,16 @@ public class PlayerBehaviour : MonoBehaviour
     #region Settling and Update Voids
 
     private void Awake()
-
     {
         playerState = PlayerState.Locked;
-        healthBar.SetMaxHealth(maxHP);
-        hitBoxCollider = gameObject.GetComponentInChildren<EdgeCollider2D>();
+        healthBar.SetMaxHealth(maxHP);      
         hitBoxReference = gameObject.transform.localPosition;
         currentHP = maxHP;
         canMove = false;
         player.transform.position = spawnPosition.transform.position;
+        hitBoxCollider = gameObject.GetComponentInChildren<EdgeCollider2D>();
         rigidBody2D = gameObject.GetComponent<Rigidbody2D>();
         offset = hitBoxCollider.points[1];
-        ResetState();
         CalculateCooldown();
         currentAnimation = IDLE;
         playerName = transform.GetChild(0).tag;
@@ -99,6 +97,7 @@ public class PlayerBehaviour : MonoBehaviour
             audioSource.panStereo = 0.75f;
         }
 
+        ResetState();
 
         /*
         AnimationClip[] animationClips = animator.runtimeAnimatorController.animationClips;
