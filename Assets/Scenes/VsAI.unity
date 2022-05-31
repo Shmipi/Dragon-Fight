@@ -573,6 +573,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6763148219997834778, guid: 5ce47dc86707a01469f411bca1eeda8a, type: 3}
+      propertyPath: matchController
+      value: 
+      objectReference: {fileID: 562236677}
     - target: {fileID: 6763148220318105905, guid: 5ce47dc86707a01469f411bca1eeda8a, type: 3}
       propertyPath: m_IsActive
       value: 0

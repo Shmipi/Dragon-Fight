@@ -13,7 +13,8 @@ public class MainMenu_PlayLevel : MonoBehaviour
     {
         SceneManager.LoadScene(2);
     }
-    public void PlayLevelThree()
+
+    /*public void PlayLevelThree()
     {
         SceneManager.LoadScene(3);
     }
@@ -21,4 +22,5 @@ public class MainMenu_PlayLevel : MonoBehaviour
     {
         SceneManager.LoadScene(4);
     }
+    */
 }
