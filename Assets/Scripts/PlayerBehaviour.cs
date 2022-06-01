@@ -188,7 +188,6 @@ public class PlayerBehaviour : MonoBehaviour
     public void ForceReturn()
     {
         string clipName = animator.GetCurrentAnimatorClipInfo(0)[0].clip.name;
-        if (clipName == IDLE) return;
         if(clipName == "Return0")
         {
             float exitTime = exitAnimationFrame(animator.GetCurrentAnimatorStateInfo(1).normalizedTime);
@@ -197,9 +196,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
         else
         {
-            canMove = true;
-            ChangeAnimation(RETURN, timeController);
-            playerState = PlayerState.Standby;
+            StartCoroutine(ReturnFromAttacked(1f));
         }
     }
 
@@ -359,9 +356,12 @@ public class PlayerBehaviour : MonoBehaviour
         animator.Play(ATKBSPRITE, 2, 0f);
         animator.Play(ATTACKB, 1, exitTime);
         currentSpeed = attackMovementSpeed * attackCooldownF / attackCooldownB;
-        yield return new WaitForSeconds(attackCooldownB * (1f - exitTime));
+        yield return new WaitForSeconds(Math.Abs(attackCooldownB * (1f - exitTime)));
+        print(attackCooldownB * (1f - exitTime));
         canAttack = true;
         canMove = true;
+        canGetHurt = true;
+        busy = false;
         currentTarget = spawnPosition;
         ChangeAnimation(RETURN, timeController);
         playerState = PlayerState.Standby;
@@ -398,8 +398,7 @@ public class PlayerBehaviour : MonoBehaviour
         hitBoxCollider.enabled = true;
         canPressAtk = true;
         currentTarget = oldTarget;
-        busy = false;
-        canGetHurt = true;
+        busy = false;       
         ForceReturn();
     }
 
