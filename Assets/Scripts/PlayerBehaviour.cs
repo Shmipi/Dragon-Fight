@@ -47,7 +47,7 @@ public class PlayerBehaviour : MonoBehaviour
     private bool canAttack;
     private string currentAnimation;
     private Vector2 offset;
-    public HealthBar healthBar;
+    public NewHealthbar healthBar;
     [SerializeField] private float timeController = 0f;
     [SerializeField] private float currentSpeed;
     private float attackCooldownF;
@@ -75,8 +75,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Awake()
     {
-        playerState = PlayerState.Locked;
-        healthBar.SetMaxHealth(maxHP);      
+        playerState = PlayerState.Locked;     
         hitBoxReference = gameObject.transform.localPosition;
         currentHP = maxHP;
         canMove = false;
