@@ -5,15 +5,15 @@ using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
-
-    [SerializeField] Slider volumeSlider; 
+    private const string gameVolume = "gameVolume";
+    [SerializeField] private Slider volumeSlider; 
 
     
     void Start()
     {
-        if (!PlayerPrefs.HasKey("gameVolume"))
+        if (!PlayerPrefs.HasKey(gameVolume))
         {
-            PlayerPrefs.SetFloat("gameVolume", 100);
+            PlayerPrefs.SetFloat(gameVolume, 100);
             Load();
         }
         else
@@ -32,12 +32,12 @@ public class SoundManager : MonoBehaviour
     //Loads the previous settings when you start the game 
     private void Load()
     {
-        volumeSlider.value = PlayerPrefs.GetFloat("gameVolume"); 
+        volumeSlider.value = PlayerPrefs.GetFloat(gameVolume); 
     }
 
     //Saves the volume setting  
     private void Save()
     {
-        PlayerPrefs.SetFloat("gameVolume", volumeSlider.value); 
+        PlayerPrefs.SetFloat(gameVolume, volumeSlider.value); 
     }
 }

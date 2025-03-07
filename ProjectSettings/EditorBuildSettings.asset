@@ -6,12 +6,15 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Menu.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: 2961d57c63cde334cb3d6ae421a8b696
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 32ed9977e7b0c944aa58448230bd69ef
+    path: Assets/Scenes/SelectPlayer.unity
+    guid: e6703592dee87014f9b1128ad2e6eb59
   - enabled: 1
-    path: Assets/Scenes/VsAI.unity
-    guid: 1d3b5aaafe2c43d42ad7c8c44d6f7473
+    path: Assets/Scenes/PvPScene.unity
+    guid: c4ce49a1079677b448fe3b43a34546fe
+  - enabled: 1
+    path: Assets/Scenes/AIScene.unity
+    guid: e03e04078181df544805af697057e0ab
   m_configObjects: {}

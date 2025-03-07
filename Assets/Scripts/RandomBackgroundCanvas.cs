@@ -5,17 +5,16 @@ using UnityEngine.UI;
 
 public class RandomBackgroundCanvas : MonoBehaviour
 {
-    public Image gameBackground;
+    private Image gameBackground;
 
-    public Sprite[] Sprites;
-
-    public int x;
+    [SerializeField] Sprite[] sprites;
 
     void Start()
     {
-        x = Random.Range(0, 3);
+        gameBackground = GetComponent<Image>();
+        int index = Random.Range(0, sprites.Length);
 
-        gameBackground.sprite = Sprites[x];
+        gameBackground.sprite = sprites[index];
     }
 
 }

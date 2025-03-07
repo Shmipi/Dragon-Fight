@@ -8,6 +8,6 @@ public class RestartScript : MonoBehaviour
 
     public void RestartGame()
     {
-        matchController.MatchStart();
+        matchController.StartMatch();
     }
 }
